@@ -1,0 +1,25 @@
+version: '3.1'
+services:
+  mongo-test:
+    image: mongo
+  node-test:
+    image: node
+    links:
+      - mongo-test
+    depends_on:
+      - mongo-test
+    command:
+      - npm
+      - test
+    volumes:
+      - data:/usr/src
+    working_dir: /usr/src
+    environment:
+     MONGODB_URI: 'mongodb://mongo-test:27017/api'
+
+volumes:
+  data:
+    driver_opts:
+      type: none
+      device: $PWD
+      o: bind
