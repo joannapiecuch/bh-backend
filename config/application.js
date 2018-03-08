@@ -1,19 +1,20 @@
 const restify = require('restify');
 const mongoose = require('mongoose');
 const membersController = require('../app/controllers/membersController');
+const config = require('./config');
 
 const server = restify.createServer({
-  name: 'API',
-  version: '1.0.0'
+  name: config.name,
+  version: config.version
 });
 
 server.use(restify.plugins.acceptParser(server.acceptable));
 server.use(restify.plugins.queryParser());
 server.use(restify.plugins.bodyParser());
 
-server.listen(3000, () => {
+server.listen(config.port, () => {
   mongoose.Promise = global.Promise;
-  mongoose.connect('mongodb://localhost:27017/BhBackend');
+  mongoose.connect(config.db.uri);
   const db = mongoose.connection;
 
   db.on('error', err => {
@@ -22,7 +23,6 @@ server.listen(3000, () => {
 
   db.once('open', () => {
     membersController(server);
-    console.log(`Server is listening on port localhost:3000`);
+    console.log(`Server is listening on port ${config.port}`);
   });
 });
-

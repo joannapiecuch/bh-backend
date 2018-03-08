@@ -2,11 +2,27 @@ version: '3.1'
 services:
   mongo:
     image: mongo
+  node:
+    image: node
     ports:
-      - 27017:27017
-  express:
-    image: mongo-express
+      - 3000:3000
     links:
       - mongo
-    ports:
-      - 8081:8081
+    depends_on:
+      - mongo
+    command:
+      - npm
+      - run-script
+      - run
+    volumes:
+      - data:/usr/src
+    working_dir: /usr/src
+    environment:
+     MONGODB_URI: 'mongodb://mongo:27017/api'
+
+volumes:
+  data:
+    driver_opts:
+      type: none
+      device: $PWD
+      o: bind
